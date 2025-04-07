@@ -1,0 +1,21 @@
+.hello{
+    font-family: sans-serif;
+}
+.heading{
+    background-color: aqua;
+    display: block;
+   }
+   img{
+    height: 300px;
+    width: auto;
+   }
+   .clikk{
+    height: 50px;
+    width: 70px;
+    border-radius: 20px;
+    background-color: lightgoldenrodyellow;
+    cursor: pointer;
+   }
+   .clikk:hover{
+    background-color: goldenrod;
+   }
