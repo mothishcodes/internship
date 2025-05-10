@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Personal Portfolio</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header, footer { background: #333; color: #fff; text-align: center; padding: 1em; }
+    nav a { color: white; margin: 0 15px; text-decoration: none; }
+    section { padding: 2em; max-width: 1000px; margin: auto; }
+    h2 { border-bottom: 2px solid #ccc; padding-bottom: 0.5em; }
+
+    /* To-Do App */
+    #todo-app input { padding: 5px; margin-right: 10px; }
+    .task { display: flex; justify-content: space-between; margin: 5px 0; }
+    .task button { margin-left: 10px; }
+
+    /* Product Filter */
+    .filters, .sort { margin: 10px 0; }
+    .products { display: flex; flex-wrap: wrap; gap: 1em; }
+    .product { border: 1px solid #ccc; padding: 1em; width: calc(33% - 2em); box-sizing: border-box; }
+
+    @media (max-width: 768px) {
+      .product { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>My Portfolio</h1>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section id="about">
+    <h2>About Me</h2>
+    <p>Hello! I'm a front-end developer showcasing my skills in HTML, CSS, and JavaScript through this interactive portfolio.</p>
+  </section>
+
+  <section id="projects">
+    <h2>Projects</h2>
+
+    <!-- To-Do List App -->
+    <div id="todo-app">
+      <h3>📝 To-Do List</h3>
+      <input type="text" id="taskInput" placeholder="Enter a task" />
+      <button onclick="addTask()">Add Task</button>
+      <ul id="taskList"></ul>
+    </div>
+
+    <!-- Product Filter & Sort -->
+    <div id="product-page">
+      <h3>🛍️ Product Filter & Sort</h3>
+      <div class="filters">
+        <label>Filter by Category:
+          <select id="categoryFilter">
+            <option value="all">All</option>
+            <option value="clothing">Clothing</option>
+            <option value="electronics">Electronics</option>
+          </select>
+        </label>
+        <label>Sort by:
+          <select id="sortOption">
+            <option value="default">Default</option>
+            <option value="price">Price</option>
+            <option value="rating">Rating</option>
+          </select>
+        </label>
+      </div>
+      <div class="products" id="productContainer"></div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <form onsubmit="alert('Message sent!'); return false;">
+      <input type="text" placeholder="Your Name" required/><br/><br/>
+      <input type="email" placeholder="Your Email" required/><br/><br/>
+      <textarea placeholder="Your Message" required></textarea><br/><br/>
+      <button type="submit">Send</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 My Portfolio. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // To-Do App Logic
+    const taskInput = document.getElementById("taskInput");
+    const taskList = document.getElementById("taskList");
+
+    function loadTasks() {
+      const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      taskList.innerHTML = "";
+      tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        li.className = "task";
+        li.innerHTML = `${task} <button onclick="deleteTask(${index})">Delete</button>`;
+        taskList.appendChild(li);
+      });
+    }
+
+    function addTask() {
+      const task = taskInput.value.trim();
+      if (task) {
+        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        tasks.push(task);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        taskInput.value = "";
+        loadTasks();
+      }
+    }
+
+    function deleteTask(index) {
+      const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      tasks.splice(index, 1);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      loadTasks();
+    }
+
+    loadTasks();
+
+    // Product Filter & Sort Logic
+    const products = [
+      { name: "T-Shirt", category: "clothing", price: 20, rating: 4.5 },
+      { name: "Jeans", category: "clothing", price: 40, rating: 4.0 },
+      { name: "Smartphone", category: "electronics", price: 200, rating: 4.7 },
+      { name: "Headphones", category: "electronics", price: 50, rating: 4.3 },
+    ];
+
+    const productContainer = document.getElementById("productContainer");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const sortOption = document.getElementById("sortOption");
+
+    function displayProducts(filteredProducts) {
+      productContainer.innerHTML = "";
+      filteredProducts.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `<strong>${p.name}</strong><br>Category: ${p.category}<br>Price: $${p.price}<br>Rating: ${p.rating}`;
+        productContainer.appendChild(div);
+      });
+    }
+
+    function updateProductDisplay() {
+      let filtered = [...products];
+
+      const category = categoryFilter.value;
+      if (category !== "all") {
+        filtered = filtered.filter(p => p.category === category);
+      }
+
+      const sortBy = sortOption.value;
+      if (sortBy === "price") {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sortBy === "rating") {
+        filtered.sort((a, b) => b.rating - a.rating);
+      }
+
+      displayProducts(filtered);
+    }
+
+    categoryFilter.addEventListener("change", updateProductDisplay);
+    sortOption.addEventListener("change", updateProductDisplay);
+    updateProductDisplay();
+  </script>
+</body>
+</html>
